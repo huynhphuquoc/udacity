@@ -1,14 +1,18 @@
 package api;
 
+import exception.HotelReservationException;
 import model.Customer;
 import model.IRoom;
 import model.Reservation;
 import service.CustomerService;
+import service.Data;
 import service.ReservationService;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class HotelResource {
 
@@ -29,31 +33,28 @@ public class HotelResource {
         return reservationService.getARoom(roomNumber);
     }
 
-    public Reservation bookARoom(String customerEmail, IRoom room, Date checkInDate, Date checkOutDate) {
-        return reservationService.reserveARoom(getCustomer(customerEmail), room, checkInDate, checkOutDate);
-    }
-
-    public List<Reservation> getCustomersReservations(String customerEmail) {
-        final Customer customer = getCustomer(customerEmail);
+    public Reservation bookARoom(String customerEmail, IRoom room, Date checkInDate, Date CheckOutDate) throws HotelReservationException {
+        Customer customer = customerService.getCustomer(customerEmail);
 
         if (customer == null) {
-            return Collections.emptyList();
+            throw new HotelReservationException("Customer not found. Please create new account with this Email.");
         }
 
-        return reservationService.getCustomersReservation(getCustomer(customerEmail));
+        return reservationService.reserveARoom(customer,room, checkInDate, CheckOutDate);
     }
 
-    public List<IRoom> findARoom(final Date checkIn, final Date checkOut) {
+    public Collection<Reservation> getCustomersReservations(String customerEmail) throws HotelReservationException {
+        Customer customer = customerService.getCustomer(customerEmail);
+
+        if (customer == null) {
+            throw new HotelReservationException("Customer not found. Please create new account with this Email.");
+        }
+
+        return reservationService.getCustomersReservation(customer);
+    }
+
+    public Collection<IRoom> findARoom(Date checkIn, Date checkOut) {
         return reservationService.findRooms(checkIn, checkOut);
     }
-
-    public List<IRoom> findAlternativeRooms(final Date checkIn, final Date checkOut) {
-        return reservationService.findAlternativeRooms(checkIn, checkOut);
-    }
-
-    public Date addDefaultPlusDays(final Date date) {
-        return reservationService.addDefaultPlusDays(date);
-    }
-
 
 }

@@ -1,5 +1,6 @@
 package api;
 
+import exception.HotelReservationException;
 import model.Customer;
 import model.IRoom;
 import service.CustomerService;
@@ -19,14 +20,14 @@ public class AdminResource {
     }
 
     public void addRoom(List<IRoom> rooms) {
-        rooms.forEach(reservationService::addRoom);
+        rooms.stream().forEach( room -> reservationService.addRoom(room));
     }
 
-    public List<IRoom> getAllRooms() {
+    public Collection<IRoom> getAllRooms() {
         return reservationService.getAllRooms();
     }
 
-    public List<Customer> getAllCustomers() {
+    public Collection<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 

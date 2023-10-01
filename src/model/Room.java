@@ -27,4 +27,10 @@ public class Room implements IRoom{
         return this.price != null && this.price.equals(0.0);
     }
 
+    @Override
+    public String toString() {
+        return "roomNumber='" + roomNumber + '\'' +
+                ", price=" + price +
+                ", enumeration=" + enumeration;
+    }
 }
